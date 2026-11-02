@@ -157,6 +157,8 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
         storedSubscriptionPolicy === ChildOrgSubscriptionPolicy.SELECTED_ORGS_ONLY;
 
     const organizationsFieldName: string = `channels.${ channel.key }.organizations`;
+    // Every row renders the same panel, so the identifiers inside it are scoped to the channel.
+    const channelComponentId: string = `${ componentId }-${ channel.key }`;
 
     const [ isPolicySwitchModalOpen, setIsPolicySwitchModalOpen ] = useState<boolean>(false);
     const [ policySwitchApproach, setPolicySwitchApproach ] = useState<PolicySwitchApproach>(null);
@@ -357,7 +359,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
             </Typography>
             <RadioGroup
                 aria-label={ t("webhooks:configForm.channels.subscriptionPolicy.heading") }
-                data-componentid={ `${ componentId }-policy-radio-group` }
+                data-componentid={ `${ channelComponentId }-policy-radio-group` }
                 value={ subscriptionPolicy }
                 onChange={ (event: ChangeEvent<HTMLInputElement>) =>
                     handlePolicyChange(event.target.value as ChildOrgSubscriptionPolicy) }
@@ -367,14 +369,14 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                     control={ <Radio /> }
                     disabled={ isReadOnly || !isSubscribed }
                     label={ t("webhooks:configForm.channels.subscriptionPolicy.none") }
-                    data-componentid={ `${ componentId }-policy-none` }
+                    data-componentid={ `${ channelComponentId }-policy-none` }
                 />
                 <FormControlLabel
                     value={ ChildOrgSubscriptionPolicy.ALL_EXISTING_AND_FUTURE_ORGS }
                     control={ <Radio /> }
                     disabled={ isReadOnly || !isSubscribed }
                     label={ t("webhooks:configForm.channels.subscriptionPolicy.allOrganizations") }
-                    data-componentid={ `${ componentId }-policy-all-orgs` }
+                    data-componentid={ `${ channelComponentId }-policy-all-orgs` }
                 />
                 <FormControlLabel
                     value={ ChildOrgSubscriptionPolicy.SELECTED_ORGS_ONLY }
@@ -390,13 +392,13 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                                 </Hint>
                             </>
                         ) }
-                    data-componentid={ `${ componentId }-policy-selected-orgs` }
+                    data-componentid={ `${ channelComponentId }-policy-selected-orgs` }
                 />
             </RadioGroup>
             { isSelectedOrgsPolicy && (
                 <Box className="subscription-policy-org-tree">
                     <SelectiveOrgSubscription
-                        data-componentid={ `${ componentId }-org-tree` }
+                        data-componentid={ `${ channelComponentId }-org-tree` }
                         selectedOrgIds={ channelValue?.organizations ?? [] }
                         onChange={ handleOrganizationsChange }
                         disabled={ isReadOnly || !isSubscribed }
@@ -409,7 +411,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                         emptyPlaceholderText={ t("webhooks:configForm.channels.subscriptionPolicy.noOrganizations") }
                     />
                     { organizationsError && (
-                        <FormHelperText error data-componentid={ `${ componentId }-org-error` }>
+                        <FormHelperText error data-componentid={ `${ channelComponentId }-org-error` }>
                             { organizationsError }
                         </FormHelperText>
                     ) }
@@ -426,7 +428,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
             onChange={ isChildOrgSubscriptionEnabled
                 ? (_event: SyntheticEvent, expanded: boolean) => onExpandedChange(expanded)
                 : undefined }
-            data-componentid={ `${ componentId }-${ channel.key }` }
+            data-componentid={ channelComponentId }
             className={ `webhook-channel-accordion${ isChildOrgSubscriptionEnabled ? "" : " static" }` }
         >
             <AccordionSummary
@@ -440,7 +442,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                 >
                     <FinalFormField
                         ariaLabel={ channel.name }
-                        data-componentid={ `${ componentId }-${ channel.key }-checkbox` }
+                        data-componentid={ `${ channelComponentId }-checkbox` }
                         name={ `channels.${ channel.key }.subscribed` }
                         component={ CheckboxAdapter }
                         disabled={ isReadOnly }
@@ -470,7 +472,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                     onPrimaryActionClick={ handlePolicySwitchConfirm }
                     onSecondaryActionClick={ closePolicySwitchModal }
                     closeOnDimmerClick={ false }
-                    data-componentid={ `${ componentId }-policy-switch-modal` }
+                    data-componentid={ `${ channelComponentId }-policy-switch-modal` }
                 >
                     <ConfirmationModal.Header>
                         { t("webhooks:configForm.channels.subscriptionPolicy.switchModal.header") }
@@ -484,14 +486,14 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                             value={ policySwitchApproach }
                             onChange={ (event: ChangeEvent<HTMLInputElement>) =>
                                 setPolicySwitchApproach(event.target.value as PolicySwitchApproach) }
-                            data-componentid={ `${ componentId }-policy-switch-group` }
+                            data-componentid={ `${ channelComponentId }-policy-switch-group` }
                             className="mt-3"
                         >
                             <FormControlLabel
                                 value={ PolicySwitchApproach.PRESERVE }
                                 control={ <Radio /> }
                                 className="mb-3"
-                                data-componentid={ `${ componentId }-policy-switch-preserve` }
+                                data-componentid={ `${ channelComponentId }-policy-switch-preserve` }
                                 label={ (
                                     <Typography variant="body1">
                                         <b>{ t("webhooks:configForm.channels.subscriptionPolicy.switchModal.preserveLabel") }: </b>
@@ -502,7 +504,7 @@ const WebhookChannelAccordionItem: FunctionComponent<WebhookChannelAccordionItem
                             <FormControlLabel
                                 value={ PolicySwitchApproach.RESET }
                                 control={ <Radio /> }
-                                data-componentid={ `${ componentId }-policy-switch-reset` }
+                                data-componentid={ `${ channelComponentId }-policy-switch-reset` }
                                 label={ (
                                     <Typography variant="body1">
                                         <b>{ t("webhooks:configForm.channels.subscriptionPolicy.switchModal.resetLabel") }: </b>
